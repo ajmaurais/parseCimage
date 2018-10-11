@@ -43,7 +43,7 @@ def outliers_iqr(ys):
 # return all non outliers in list based off user specified outlier test method
 def rmOutliers(dat, _outlierTest = 1):
     if _outlierTest == 0:
-        return dat
+        return dat, [True for x in dat]
     elif _outlierTest == 1:
         booList = outliers_iqr(dat)
         return list(compress(dat, booList)), booList

@@ -63,22 +63,22 @@ class Protein:
         booList = list()
 
         self.getRatios(ratios, skipNull=True)
-        if _outlierTest != 0:
-            for i in range(0, len(self.colnames)):
-                preLen = len(ratios[i])
-                if len(ratios[i]) > 1:
-                    ratios[i], booList = utils.rmOutliers(ratios[i], _outlierTest)
-                self.nOutliersDetected.append(preLen - len(ratios[i]))
+        #if _outlierTest != 0:
+        for i in range(0, len(self.colnames)):
+            preLen = len(ratios[i])
+            if len(ratios[i]) > 1:
+                ratios[i], booList = utils.rmOutliers(ratios[i], _outlierTest)
+            self.nOutliersDetected.append(preLen - len(ratios[i]))
 
-                booListCounter = 0
-                for pep in self.peptides:
-                    if pep.dat[i] != 0 and len(booList) > 0:
-                        pep.outliersList.append(str(int(not booList[booListCounter])))
-                        booListCounter += 1
-                    else:
-                        pep.outliersList.append(_na)
-        else:
-            self.nOutliersDetected = [0 for x in self.colnames]
+            booListCounter = 0
+            for pep in self.peptides:
+                if pep.dat[i] != 0 and len(booList) > 0:
+                    pep.outliersList.append(str(int(not booList[booListCounter])))
+                    booListCounter += 1
+                else:
+                    pep.outliersList.append(_na)
+        #else:
+        #    self.nOutliersDetected = [0 for x in self.colnames]
 
         for i in range(0, len(self.colnames)):
             if len(ratios[i]) == 0:
