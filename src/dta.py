@@ -243,13 +243,13 @@ class DtaFile:
             if _output == 'both':
                 headers = ["DatType"] + headers
             elif _output == "protein":
-                headers = [x for x in headers if x not in ["Sequence", "Charge", "Ratio"]]
+                headers = [x for x in headers if x not in ["sequence", "charge", "ratio"]]
             tempNames = [name.replace(_samplePrefix, "") for name in self.colnames]
 
             if _parseReplicate:
-                i = headers.index("Sample")
-                headers.insert(i, "LongSampleName")
-                headers.insert(i + 2, "Replicate")
+                i = headers.index("sample")
+                headers.insert(i, "long_sample_name")
+                headers.insert(i + 2, "replicate")
                 samples = [x.rsplit("_", 1) for x in tempNames]
                 protein.Protein.splitSamples = samples
             else:
@@ -266,7 +266,7 @@ class DtaFile:
                     self.proteins[key].writeLong(outF, _output, i, _parseReplicate, _skipNull)
             sucess = True
         except:
-            sucess = False
+           sucess = False
 
         return sucess
 
