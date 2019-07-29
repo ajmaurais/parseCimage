@@ -1,8 +1,8 @@
 
-import peptide
+from .peptide import Peptide
 import numpy
-import utils
-import constants as const
+from .utils import *
+from .constants import *
 
 class Protein:
     colnames = list()
@@ -29,14 +29,14 @@ class Protein:
         Protein.nCols = len(Protein.colnames)
 
     def addPeptide(self, _id, _protein, _description, _charge, _seq, _dat):
-        self.peptides.append(peptide.Peptide(_id, _protein, _description, _charge, _seq, _dat))
+        self.peptides.append(Peptide(_id, _protein, _description, _charge, _seq, _dat))
 
     def addPeptideLine(self, elems):
         self.addPeptide(self.id,
                         self.protein,
                         self.description,
-                        elems[self.headerIndexMap[const.CHARGE_COLNAME]],
-                        elems[self.headerIndexMap[const.SEQ_COLNAME]],
+                        elems[self.headerIndexMap[CHARGE_COLNAME]],
+                        elems[self.headerIndexMap[SEQ_COLNAME]],
                         [elems[self.headerIndexMap[name]] for name in self.colnames])
 
     def getRatios(self, _ratios, skipNull = True):
@@ -67,7 +67,7 @@ class Protein:
         for i in range(0, len(self.colnames)):
             preLen = len(ratios[i])
             if len(ratios[i]) > 1:
-                ratios[i], booList = utils.rmOutliers(ratios[i], _outlierTest)
+                ratios[i], booList = rmOutliers(ratios[i], _outlierTest)
             self.nOutliersDetected.append(preLen - len(ratios[i]))
 
             booListCounter = 0
@@ -89,7 +89,7 @@ class Protein:
             else:
                 self.mrList.append(numpy.median(ratios[i], axis=0))
                 self.avgrList.append(numpy.mean(ratios[i], axis=0))
-                self.sdList.append(utils.meanAbsDev(ratios[i]))
+                self.sdList.append(meanAbsDev(ratios[i]))
                 self.nPeptidesList.append((len([x for x in ratios[i] if x != 0])))
 
         for pep in self.peptides:

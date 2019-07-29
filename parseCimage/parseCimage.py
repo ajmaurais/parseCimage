@@ -128,8 +128,10 @@ def main():
         sys.stdout.write("\nReading " + args.input_file + "...\n")
     dtaFile = dta.DtaFile(fname)
     dtaFile.setVerbosity(not args.quiet)
-    if not dtaFile.read(args.sampleRegex, args.input):
-        sys.stderr.write("Error reading " + fname + '\n')
+    try:
+        dtaFile.read(args.sampleRegex, args.input)
+    except Exception as e:
+        sys.stderr.write("Error reading {}:\n{}\n".format(fname, e))
         exit()
 
     # process and perform statistics
@@ -164,5 +166,5 @@ def main():
             sys.stdout.write("done\n" + "Data written in long format to: " + os.path.basename(ofname) + '\n')
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
 
