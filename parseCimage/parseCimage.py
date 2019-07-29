@@ -11,7 +11,7 @@ OFNAME_WIDE = "_fixed.tsv"
 OFNAME_LONG = "_fixed_long.tsv"
 DEFAULT_SAMPLE_RE = "^mr.set_[0-9]+$"
 
-def main(argv):
+def main():
 
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
                             description = textwrap.dedent('''\
