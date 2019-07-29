@@ -9,3 +9,4 @@ testFiles/*
 *.pyc
 .spyproject/*
 .Rproj.user
+bin/*
