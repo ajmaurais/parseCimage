@@ -147,9 +147,11 @@ def main():
         if not args.quiet:
             sys.stdout.write("\nWriting data...")
         ofname = os.path.splitext(fname)[0] + OFNAME_WIDE
-        if not dtaFile.writeWide(ofname, args.output, args.peptideSummary,
-                                 args.samplePrefix, args.parentDat, (not args.nullP)):
-            sys.stderr.write("Failed to write" + ofname + "\nExiting...\n")
+        try:
+            dtaFile.writeWide(ofname, args.output, args.peptideSummary,
+                                 args.samplePrefix, args.parentDat, (not args.nullP))
+        except Exception as e:
+            sys.stderr.write("Error: {}\nFailed to write: {}\nExiting...\n".format(e, ofname))
             exit()
         if not args.quiet:
             sys.stdout.write("done\n" + "Data written in wide format to: " + os.path.basename(ofname) + '\n')
@@ -158,9 +160,11 @@ def main():
         if not args.quiet:
             sys.stdout.write("\nWriting data...")
         ofname = os.path.splitext(fname)[0] + OFNAME_LONG
-        if not dtaFile.writeLong(ofname, args.output, args.samplePrefix,
-                                 args.parseReplicate, (not args.nullP)):
-            sys.stderr.write("Failed to write" + ofname + "\nExiting...\n")
+        try:
+            dtaFile.writeLong(ofname, args.output, args.samplePrefix,
+                                 args.parseReplicate, (not args.nullP))
+        except Exception as e:
+            sys.stderr.write("Error: {}\nFailed to write: {}\nExiting...\n".format(e, ofname))
             exit()
         if not args.quiet:
             sys.stdout.write("done\n" + "Data written in long format to: " + os.path.basename(ofname) + '\n')

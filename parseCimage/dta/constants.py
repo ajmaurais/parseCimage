@@ -7,4 +7,4 @@ DESCRIPTION_COLNAME = "description"
 SEQ_COLNAME = "sequence"
 MASS_COLNAME = "mass"
 CHARGE_COLNAME = "charge"
-
+SEGMENT_COLNAME = "segment"

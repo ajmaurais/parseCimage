@@ -1,12 +1,13 @@
 
 class Peptide:
 
-    def __init__(self, _id, _protein, _description, _charge, _seq, _dat):
+    def __init__(self, _id, _protein, _description, _charge, _segment, _seq, _dat):
         self.id = _id
         self.protein = _protein
         self.description = _description
         self.seq = _seq
         self.charge = _charge
+        self.segment = _segment
         self.dat = [float(x) for x in _dat]
         self.datStr = _dat
         self.nPeptides = len([x for x in self.dat if x != 0])
@@ -35,7 +36,8 @@ class Peptide:
         else:
             outF.write('\t' * 2)
 
-        outF.write('\t' + self.seq + '\t' + self.charge)
+        #outF.write('\t' + self.seq + '\t' + self.charge)
+        outF.write('\t{}\t{}\t{}'.format(self.seq, self.charge, self.segment))
 
         for val in self.datStr:
             outF.write('\t' + val)
@@ -55,6 +57,7 @@ class Peptide:
                    '\t' + self.description +
                    '\t' + self.seq +
                    '\t' + self.charge +
+                   '\t' + self.segment +
                    '\t' + _sampleStr + '\t' + self.datStr[_index])
 
         return self.outliersList[_index]

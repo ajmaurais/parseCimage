@@ -28,14 +28,15 @@ class Protein:
         Protein.colnames = _colnames
         Protein.nCols = len(Protein.colnames)
 
-    def addPeptide(self, _id, _protein, _description, _charge, _seq, _dat):
-        self.peptides.append(Peptide(_id, _protein, _description, _charge, _seq, _dat))
+    def addPeptide(self, _id, _protein, _description, _charge, _segment, _seq, _dat):
+        self.peptides.append(Peptide(_id, _protein, _description, _charge, _segment, _seq, _dat))
 
     def addPeptideLine(self, elems):
         self.addPeptide(self.id,
                         self.protein,
                         self.description,
                         elems[self.headerIndexMap[CHARGE_COLNAME]],
+                        elems[self.headerIndexMap[SEGMENT_COLNAME]],
                         elems[self.headerIndexMap[SEQ_COLNAME]],
                         [elems[self.headerIndexMap[name]] for name in self.colnames])
 
@@ -111,7 +112,11 @@ class Protein:
 
             outF.write(self.id +
                    '\t' + self.protein +
-                   '\t' + self.description + ('\t' * 2))
+                   '\t' + self.description + ('\t' * 3))
+
+            segments = set([x.segment for x in self.peptides])
+            segments = '|'.join(sorted(segments))
+            outF.write('{}'.format(segments))
 
             # stuff which will already be in peptide dat
             for val in self.mrList:
@@ -172,7 +177,11 @@ class Protein:
                        '\t' + self.description)
 
             if includePeptide:
-                outF.write('\t' * 2)
+                outF.write('\t' * 3)
+
+            segments = set([x.segment for x in  self.peptides])
+            segments = '|'.join(sorted(segments))
+            outF.write('{}'.format(segments))
 
         if _parseReplicate:
             sTemp = (str(self.splitSamples[_index][0]) + "_" +

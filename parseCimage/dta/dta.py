@@ -13,9 +13,10 @@ class DtaFile:
                       PROTEIN_COLNAME : None,
                       SEQ_COLNAME : None,
                       MASS_COLNAME : None,
-                      CHARGE_COLNAME : None}
+                      CHARGE_COLNAME : None,
+                      SEGMENT_COLNAME : None}
     colHeadersPre = ["ID", "protein", "description",
-                     "sequence", "charge"]
+                     "sequence", "charge", "segment"]
     colHeadersLong = ["sample", "ratio", "median_ratio", "avg_ratio",
                       "median_avg_dev", "outlierBool", "nOutliers", "nPeptides"]
     verbose = True
@@ -24,11 +25,13 @@ class DtaFile:
         self.fname = _fname
         self.proteins = dict()
         self.colnames = list()
-        
+
+
     @staticmethod
     def setVerbosity(boo):
         DtaFile.verbose = boo
         Protein.verbose = boo
+
 
     def parseColHeaders(self, elems, _sampleRegex):
         # find indecies of static col headers
@@ -61,6 +64,7 @@ class DtaFile:
 
         return True
 
+
     def read(self, _sampleRegex, _inputFormat = "byProtein"):
         if _inputFormat == "byProtein":
             self.readByProtein(_sampleRegex)
@@ -68,6 +72,7 @@ class DtaFile:
             self.readByPeptide(_sampleRegex)
         else:
             raise RuntimeError("\nInvalid input format!\n")
+
 
     def readByPeptide(self, _sampleRegex):
         inF = open(self.fname, 'rU')
@@ -149,6 +154,7 @@ class DtaFile:
         for key, prot in self.proteins.items():
             prot.rmZeros(_na)
 
+
     def normalizeBySample(self, _targetMedian = 1):
         # find median ratios for each sample
         # initialize dict of list to store ratios
@@ -164,6 +170,7 @@ class DtaFile:
         # normalize ratios in each sample
         for key in self.proteins.keys():
             self.proteins[key].normRatios(medians, _targetMedian)
+
 
     def makeWideHeaders(self, _samplePrefix, _includeSummary = True):
         ret = copy.deepcopy(self.colHeadersPre)
@@ -190,9 +197,11 @@ class DtaFile:
 
         return ret
 
+
     def calcSummary(self, _outlierTest = 1, _na = "NA"):
         for prot in self.proteins.keys():
             self.proteins[prot].calcSummary(_outlierTest, _na)
+
 
     def writeWide(self, fname, _output, _peptideSummary, _samplePrefix,
                   _proteinSummary, _skipNull):
@@ -200,62 +209,50 @@ class DtaFile:
 
         headers = self.makeWideHeaders(_samplePrefix,
                                        not((not _proteinSummary) and (_output == "peptide")))
-        try:
-            if _output == 'both':
-                headers = ["DatType"] + headers
-            for i, it in enumerate(headers):
-                if i == 0:
-                    outF.write(it)
-                else: outF.write('\t' + it)
-            outF.write('\n')
+        if _output == 'both':
+            headers = ["DatType"] + headers
+        for i, it in enumerate(headers):
+            if i == 0:
+                outF.write(it)
+            else: outF.write('\t' + it)
+        outF.write('\n')
 
+        for key in self.proteins.keys():
+            self.proteins[key].writeWide(outF, _output, _peptideSummary, _proteinSummary, _skipNull)
+
+
+    def writeLong(self, fname, _output, _samplePrefix, _parseReplicate, _skipNull):
+
+        outF = open(fname, 'w')
+
+        # make headers
+        assert (_output == "protein" or _output == "peptide" or _output == "both")
+        headers = self.colHeadersPre + self.colHeadersLong
+        if _output == 'both':
+            headers = ["DatType"] + headers
+        elif _output == "protein":
+            headers = [x for x in headers if x not in ["sequence", "charge", "ratio"]]
+        tempNames = [name.replace(_samplePrefix, "") for name in self.colnames]
+
+        if _parseReplicate:
+            i = headers.index("sample")
+            headers.insert(i, "long_sample_name")
+            headers.insert(i + 2, "replicate")
+            samples = [x.rsplit("_", 1) for x in tempNames]
+            Protein.splitSamples = samples
+        else:
+            Protein.splitSamples = tempNames
+
+        for i, it in enumerate(headers):
+            if i == 0:
+                outF.write(it)
+            else: outF.write('\t' + it)
+        outF.write('\n')
+
+        for i, name in enumerate(tempNames):
             for key in self.proteins.keys():
-                self.proteins[key].writeWide(outF, _output, _peptideSummary, _proteinSummary, _skipNull)
+                self.proteins[key].writeLong(outF, _output, i, _parseReplicate, _skipNull)
 
-            sucess = True
-        except:
-            sucess = False
-
-        return sucess
-
-    def writeLong(self, fname, _output, _samplePrefix,
-                  _parseReplicate, _skipNull):
-
-        try:
-            outF = open(fname, 'w')
-
-            # make headers
-            assert (_output == "protein" or _output == "peptide" or _output == "both")
-            headers = self.colHeadersPre + self.colHeadersLong
-            if _output == 'both':
-                headers = ["DatType"] + headers
-            elif _output == "protein":
-                headers = [x for x in headers if x not in ["sequence", "charge", "ratio"]]
-            tempNames = [name.replace(_samplePrefix, "") for name in self.colnames]
-
-            if _parseReplicate:
-                i = headers.index("sample")
-                headers.insert(i, "long_sample_name")
-                headers.insert(i + 2, "replicate")
-                samples = [x.rsplit("_", 1) for x in tempNames]
-                Protein.splitSamples = samples
-            else:
-                Protein.splitSamples = tempNames
-
-            for i, it in enumerate(headers):
-                if i == 0:
-                    outF.write(it)
-                else: outF.write('\t' + it)
-            outF.write('\n')
-
-            for i, name in enumerate(tempNames):
-                for key in self.proteins.keys():
-                    self.proteins[key].writeLong(outF, _output, i, _parseReplicate, _skipNull)
-            sucess = True
-        except:
-           sucess = False
-
-        return sucess
 
 
 
