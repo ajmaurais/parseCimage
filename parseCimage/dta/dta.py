@@ -141,8 +141,8 @@ class DtaFile:
                                      " Use --input option to specify input format!\nExiting...\n\n")
                     return False
                 self.proteins[curID] = Protein(curID,
-                                                       elems[self.headerIndexMap[DESCRIPTION_COLNAME]],
-                                                       elems[self.headerIndexMap[PROTEIN_COLNAME]])
+                                               elems[self.headerIndexMap[DESCRIPTION_COLNAME]],
+                                               elems[self.headerIndexMap[PROTEIN_COLNAME]])
             else:
                 assert curID.strip() != ""
                 self.proteins[curID].addPeptideLine(elems)
