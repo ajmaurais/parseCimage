@@ -78,7 +78,7 @@ def main():
                                "and 0 if it was\n      found to be an outlier.\n"
                                "  byProtein : The value in nOutlier will be the total\n      "
                                "outliers found for that sample.\n",
-                        choices = ["byPeptide", "byPeptide"],
+                        choices = ["byPeptide", "byProtein"],
                         default = "byPeptide")
 
     parser.add_argument("--outlierTest",

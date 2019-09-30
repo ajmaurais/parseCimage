@@ -112,8 +112,8 @@ class DtaFile:
                 else:
                     self.proteins[curID].addPeptideLine(elems)
 
-            if self.verbose:
-                sys.stdout.write(str(len(self.proteins)) + " proteins read in...\n")
+        if self.verbose:
+            sys.stdout.write(str(len(self.proteins)) + " proteins read in...\n")
 
 
     def readByProtein(self, _sampleRegex):
